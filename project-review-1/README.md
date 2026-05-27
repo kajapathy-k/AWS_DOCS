@@ -1,135 +1,268 @@
 # Multi-Application Deployment on AWS
 
-A production-style multi-application deployment architecture on AWS using **Route 53, Application Load Balancer (ALB), Auto Scaling Groups (ASG), EC2, MongoDB, Docker, and Amazon S3 Backup Workflow**.
-
-This project demonstrates how multiple applications can be hosted securely and efficiently inside a single AWS infrastructure using **host-based routing**, **private subnet deployment**, and **high availability architecture**.
+## Complete Production-Style AWS Infrastructure Deployment
 
 ---
 
 # Table of Contents
 
-1. [Project Overview](#project-overview)
-2. [Architecture Overview](#architecture-overview)
-3. [Technologies Used](#technologies-used)
-4. [AWS Services Used](#aws-services-used)
-5. [Networking Architecture](#networking-architecture)
-6. [Route 53 Configuration](#route-53-configuration)
-7. [Application Load Balancer (ALB)](#application-load-balancer-alb)
-8. [Target Groups](#target-groups)
-9. [Host-Based Routing](#host-based-routing)
-10. [Auto Scaling Groups (ASG)](#auto-scaling-groups-asg)
-11. [Launch Templates](#launch-templates)
-12. [EC2 Application Layer](#ec2-application-layer)
-13. [Dockerized MongoDB Database Layer](#dockerized-mongodb-database-layer)
-14. [Database Backup Workflow](#database-backup-workflow)
-15. [Amazon S3 Backup Storage](#amazon-s3-backup-storage)
-16. [Security Groups](#security-groups)
-17. [Traffic Flow](#traffic-flow)
-18. [High Availability & Fault Tolerance](#high-availability--fault-tolerance)
-19. [Project Workflow](#project-workflow)
-20. [GitHub Repository Structure](#github-repository-structure)
-21. [Key Learnings](#key-learnings)
-22. [Future Improvements](#future-improvements)
-23. [Conclusion](#conclusion)
+1. Project Overview
+2. Architecture Overview
+3. Architecture Flow
+4. AWS Services Used
+5. Technologies Used
+6. Networking Architecture
+7. VPC Configuration
+8. Public and Private Subnets
+9. Internet Gateway
+10. NAT Gateway
+11. Route Tables
+12. Security Groups
+13. Amazon Route 53
+14. DNS Resolution Flow
+15. Application Load Balancer (ALB)
+16. ALB Listener Rules
+17. Target Groups
+18. Host-Based Routing
+19. EC2 Application Layer
+20. PM2 Process Management
+21. MongoDB Database Layer
+22. Dockerized MongoDB Deployment
+23. Launch Templates
+24. Auto Scaling Groups (ASG)
+25. Health Checks and Self-Healing
+26. Traffic Flow Explanation
+27. Database Backup Workflow
+28. Amazon S3 Backup Storage
+29. High Availability and Fault Tolerance
+30. Project Workflow Step-by-Step
+31. Folder Structure
+32. Key Features
+33. Future Improvements
+34. Conclusion
 
 ---
 
-# Project Overview
+# 1. Project Overview
 
-This project demonstrates a complete multi-application deployment on AWS using a scalable and secure cloud architecture.
+This project demonstrates a complete production-style multi-application deployment on AWS using modern cloud architecture concepts. The main objective of this project is to host multiple applications inside a single AWS infrastructure using scalable, secure, and highly available services.
 
-Two different applications are hosted:
+In this project, two different applications are deployed:
 
-* **Organic Application**
-* **Fitness Application**
+* Organic Application
+* Fitness Application
 
-Both applications are deployed behind a single **Application Load Balancer (ALB)** using **host-based routing**.
+Both applications are hosted behind a single Application Load Balancer (ALB) using host-based routing. The infrastructure is designed using public and private subnets for better security and follows real-world cloud deployment practices.
 
-The infrastructure is designed using:
+The project also includes:
 
-* Public and Private Subnets
+* Route 53 DNS management
+* Application Load Balancer
+* Target Groups
+* Auto Scaling Groups
+* Launch Templates
+* MongoDB Database
+* Dockerized Deployment
+* Database Backup Automation
+* Amazon S3 Backup Storage
+* High Availability Architecture
+* Self-Healing Infrastructure
+
+This architecture simulates how modern enterprise applications are deployed in production environments.
+
+---
+
+# 2. Architecture Overview
+
+The architecture is divided into multiple layers:
+
+## User Layer
+
+Users access the applications using custom domain names:
+
+* organic.in-sur.site
+* fitness.in-sur.site
+
+These domains are managed using Amazon Route 53.
+
+---
+
+## Networking Layer
+
+The networking layer contains:
+
+* VPC
+* Public Subnets
+* Private Subnets
 * Internet Gateway
 * NAT Gateway
 * Route Tables
-* Auto Scaling Groups
+* Security Groups
+
+This layer controls the communication and security between all AWS resources.
+
+---
+
+## Load Balancing Layer
+
+The Application Load Balancer receives internet traffic and distributes requests to backend applications.
+
+The ALB uses:
+
+* Listener Rules
+* Host-Based Routing
 * Target Groups
-* MongoDB Database
-* Automated Database Backup Workflow
-
-The applications are deployed inside **private subnets** for improved security, while the ALB is deployed inside **public subnets** to handle internet traffic.
+* Health Checks
 
 ---
 
-# Architecture Overview
+## Application Layer
 
-## Domain Routing
+The application layer contains:
 
-| Domain              | Routed To  |
-| ------------------- | ---------- |
-| organic.in-sur.site | organic-tg |
-| fitness.in-sur.site | fitness-tg |
+* EC2 Instances
+* Auto Scaling Groups
+* PM2 Managed Applications
 
-The Application Load Balancer checks the incoming domain name and forwards traffic to the correct target group.
-
----
-
-# Technologies Used
-
-| Technology     | Purpose                    |
-| -------------- | -------------------------- |
-| AWS EC2        | Application Hosting        |
-| Route 53       | DNS Management             |
-| ALB            | Traffic Distribution       |
-| ASG            | Auto Scaling               |
-| MongoDB        | Database                   |
-| Docker         | Containerization           |
-| Docker Compose | Multi-container Management |
-| Amazon S3      | Backup Storage             |
-| Linux Cron Job | Backup Automation          |
-| Bash Scripting | Backup Script              |
-| PM2            | Node.js Process Manager    |
+Applications are deployed inside private subnets for better security.
 
 ---
 
-# AWS Services Used
+## Database Layer
+
+MongoDB database is deployed using Docker Compose inside an EC2 instance.
+
+The database layer is completely private and accessible only from application instances.
+
+---
+
+## Backup Layer
+
+Automated MongoDB backups are uploaded to Amazon S3 using a shell script.
+
+This improves:
+
+* Disaster Recovery
+* Data Durability
+* Backup Management
+
+---
+
+# 3. Architecture Flow
+
+The complete request flow works like this:
+
+```text
+User
+   ↓
+Route 53 DNS Resolution
+   ↓
+Application Load Balancer
+   ↓
+Listener Rules
+   ↓
+Target Group Selection
+   ↓
+Auto Scaling Group
+   ↓
+EC2 Application Instances
+   ↓
+MongoDB Database
+```
+
+---
+
+# 4. AWS Services Used
 
 | AWS Service               | Purpose                      |
 | ------------------------- | ---------------------------- |
-| Amazon EC2                | Application Servers          |
-| Amazon Route 53           | DNS Resolution               |
-| Application Load Balancer | Host-Based Routing           |
+| Amazon EC2                | Application Hosting          |
+| Amazon Route 53           | DNS Management               |
+| Application Load Balancer | Traffic Distribution         |
 | Auto Scaling Group        | Automatic Scaling            |
 | Launch Templates          | Instance Configuration       |
 | Target Groups             | Traffic Routing              |
-| Amazon S3                 | Database Backup Storage      |
+| Amazon S3                 | Backup Storage               |
 | VPC                       | Network Isolation            |
 | NAT Gateway               | Outbound Internet Access     |
 | Internet Gateway          | Public Internet Connectivity |
 
 ---
 
-# Networking Architecture
+# 5. Technologies Used
 
-The infrastructure is deployed inside a custom VPC.
+| Technology     | Purpose                    |
+| -------------- | -------------------------- |
+| Node.js        | Backend Application        |
+| PM2            | Process Manager            |
+| MongoDB        | Database                   |
+| Docker         | Containerization           |
+| Docker Compose | Multi-Container Deployment |
+| Bash Scripting | Backup Automation          |
+| Linux Cron     | Scheduled Tasks            |
+| AWS CLI        | AWS Service Integration    |
 
-## VPC CIDR
+---
+
+# 6. Networking Architecture
+
+The entire infrastructure is deployed inside a custom VPC.
+
+The VPC provides complete network isolation and allows secure communication between AWS resources.
+
+VPC CIDR:
 
 ```bash
 10.0.0.0/16
 ```
 
+The VPC contains:
+
+* Public Subnets
+* Private Application Subnets
+* Private Database Subnets
+* Internet Gateway
+* NAT Gateway
+* Route Tables
+
 ---
+
+# 7. VPC Configuration
+
+A Virtual Private Cloud (VPC) is created to isolate the infrastructure from other AWS customers.
+
+The VPC acts like a private network inside AWS.
+
+Benefits of VPC:
+
+* Network Isolation
+* Security
+* Controlled Communication
+* Custom Routing
+* Private Deployments
+
+CIDR Used:
+
+```bash
+10.0.0.0/16
+```
+
+This provides a large private IP range for all resources.
+
+---
+
+# 8. Public and Private Subnets
 
 ## Public Subnets
 
-Public subnets contain:
+Public subnets are used for resources that need internet access.
+
+Resources inside Public Subnets:
 
 * Application Load Balancer
 * NAT Gateway
 
-These subnets have direct internet access through the Internet Gateway.
-
-Example:
+Public Subnet CIDR:
 
 ```bash
 10.0.1.0/24
@@ -139,14 +272,13 @@ Example:
 
 ## Private Application Subnets
 
-Private application subnets contain:
+Application EC2 instances are deployed inside private subnets.
 
-* EC2 Application Instances
-* Auto Scaling Groups
+This improves security because users cannot directly access the EC2 instances.
 
-These instances do not have direct internet access.
+Traffic only comes through the ALB.
 
-Example:
+Private App Subnet CIDR:
 
 ```bash
 10.0.2.0/24
@@ -156,11 +288,11 @@ Example:
 
 ## Private Database Subnet
 
-Private database subnet contains:
+MongoDB database server is deployed inside a private database subnet.
 
-* MongoDB Database Server
+The database is fully isolated from the internet.
 
-Example:
+Private DB Subnet CIDR:
 
 ```bash
 10.0.3.0/24
@@ -168,165 +300,413 @@ Example:
 
 ---
 
-# Route 53 Configuration
+# 9. Internet Gateway
+
+An Internet Gateway (IGW) is attached to the VPC.
+
+The IGW enables communication between:
+
+* AWS Resources
+* Public Internet
+
+Without the Internet Gateway:
+
+* Users cannot access the ALB
+* Public subnets cannot communicate with the internet
+
+The public route table routes internet traffic to the IGW.
+
+---
+
+# 10. NAT Gateway
+
+The NAT Gateway is deployed inside the public subnet.
+
+Purpose of NAT Gateway:
+
+* Allows private subnet instances to access the internet
+* Blocks inbound internet traffic
+
+Why NAT Gateway is needed:
+
+Private instances sometimes need internet access for:
+
+* Package Installation
+* Docker Pull
+* Software Updates
+* AWS CLI Communication
+
+But they should not be publicly accessible.
+
+The NAT Gateway solves this problem.
+
+---
+
+# 11. Route Tables
+
+Route tables control network routing inside the VPC.
+
+---
+
+## Public Route Table
+
+```text
+10.0.0.0/16 → local
+0.0.0.0/0 → Internet Gateway
+```
+
+This allows public subnet resources to communicate with the internet.
+
+---
+
+## Private Route Table
+
+```text
+10.0.0.0/16 → local
+0.0.0.0/0 → NAT Gateway
+```
+
+This allows private instances to access the internet securely.
+
+---
+
+# 12. Security Groups
+
+Security Groups act like virtual firewalls.
+
+They control inbound and outbound traffic.
+
+---
+
+## ALB Security Group
+
+Allowed:
+
+```text
+HTTP (80) from 0.0.0.0/0
+```
+
+This allows internet users to access the ALB.
+
+---
+
+## Application Security Group
+
+Allowed:
+
+```text
+HTTP (80) only from ALB Security Group
+SSH (22) only from My IP
+```
+
+This prevents direct internet access to EC2 instances.
+
+---
+
+## MongoDB Security Group
+
+Allowed:
+
+```text
+MongoDB (27017) only from Application Security Group
+SSH (22) only from My IP
+```
+
+This protects the database from unauthorized access.
+
+---
+
+# 13. Amazon Route 53
 
 Amazon Route 53 is used for DNS management.
 
-## Hosted Zone
+Route 53 converts domain names into IP addresses.
 
-```bash
+Without Route 53:
+
+Users would need to access applications using IP addresses.
+
+Instead, users can access:
+
+* organic.in-sur.site
+* fitness.in-sur.site
+
+A hosted zone is created for:
+
+```text
 in-sur.site
 ```
 
 ---
 
-## DNS Records
+# 14. DNS Resolution Flow
 
-### Organic Application
+DNS resolution works like this:
 
-```bash
+1. User enters domain name in browser
+2. Browser checks DNS records
+3. Route 53 resolves the domain
+4. Route 53 returns ALB DNS
+5. Browser sends request to ALB
+6. ALB processes the request
+
+Example:
+
+```text
 organic.in-sur.site
+   ↓
+Route 53
+   ↓
+ALB DNS Name
 ```
 
-Alias Record → ALB
+This is how domain-based access works.
 
 ---
 
-### Fitness Application
+# 15. Application Load Balancer (ALB)
 
-```bash
-fitness.in-sur.site
-```
-
-Alias Record → ALB
-
----
-
-# Application Load Balancer (ALB)
+The Application Load Balancer is one of the most important components in this architecture.
 
 The ALB is internet-facing and deployed inside public subnets across multiple Availability Zones.
 
 Responsibilities of ALB:
 
-* Receives internet traffic
-* Checks listener rules
-* Routes traffic to target groups
+* Receives user traffic
+* Distributes requests
 * Performs health checks
-* Distributes traffic across healthy instances
+* Applies listener rules
+* Routes traffic to target groups
+* Supports high availability
+
+The ALB improves:
+
+* Scalability
+* Availability
+* Traffic Management
+* Fault Tolerance
 
 ---
 
-## Listener
+## ALB Listener
 
 The ALB listens on:
 
-```bash
+```text
 HTTP : 80
 ```
 
----
-
-# Target Groups
-
-Two separate target groups are used.
-
-| Target Group | Application         |
-| ------------ | ------------------- |
-| organic-tg   | Organic Application |
-| fitness-tg   | Fitness Application |
+The listener receives incoming requests and evaluates listener rules.
 
 ---
 
-## Why Target Groups Are Important
+# 16. ALB Listener Rules
 
-Target groups act as the bridge between:
+Listener rules are used to decide where traffic should go.
 
-* ALB
-* EC2 Instances
-* Auto Scaling Groups
+The ALB checks:
 
-The ALB forwards traffic to target groups, and target groups forward traffic to healthy EC2 instances.
+* Host Header
+* Path
+* Conditions
 
----
-
-## Health Checks
-
-Health checks continuously monitor instance health.
-
-If an instance becomes unhealthy:
-
-* ALB stops sending traffic
-* ASG replaces the instance automatically
-
----
-
-# Host-Based Routing
-
-Host-based routing is implemented using ALB listener rules.
+In this project, host-based routing is implemented.
 
 ---
 
 ## Rule 1
 
-```bash
+Condition:
+
+```text
 Host Header = organic.in-sur.site
 ```
 
-Forward to:
+Action:
 
-```bash
-organic-tg
+```text
+Forward to organic-tg
 ```
 
 ---
 
 ## Rule 2
 
-```bash
+Condition:
+
+```text
 Host Header = fitness.in-sur.site
 ```
 
-Forward to:
+Action:
 
-```bash
-fitness-tg
+```text
+Forward to fitness-tg
 ```
 
 ---
 
-# Auto Scaling Groups (ASG)
+# 17. Target Groups
 
-Two Auto Scaling Groups are created.
+Target Groups are used to route traffic from the ALB to EC2 instances.
 
-| ASG         | Purpose             |
-| ----------- | ------------------- |
-| organic-asg | Organic App Scaling |
-| fitness-asg | Fitness App Scaling |
+Target groups are extremely important because they connect:
 
----
+* ALB
+* EC2 Instances
+* Auto Scaling Groups
 
-## ASG Features
+Two target groups are created:
 
-* Maintains desired instance count
-* Automatically replaces unhealthy instances
-* Supports multi-AZ deployment
-* Enables high availability
-
----
-
-## Scaling Configuration
-
-| Setting          | Value |
-| ---------------- | ----- |
-| Desired Capacity | 1     |
-| Minimum Capacity | 1     |
-| Maximum Capacity | 2     |
+| Target Group | Purpose             |
+| ------------ | ------------------- |
+| organic-tg   | Organic Application |
+| fitness-tg   | Fitness Application |
 
 ---
 
-# Launch Templates
+## How Target Groups Work
 
-Launch templates store EC2 configuration.
+1. ALB receives request
+2. Listener rule matches domain
+3. Request forwarded to Target Group
+4. Target Group selects healthy EC2 instance
+5. Traffic reaches application
+
+---
+
+## Health Checks
+
+Target Groups continuously monitor instance health.
+
+If health check fails:
+
+* ALB stops sending traffic
+* ASG replaces unhealthy instance
+
+This enables self-healing infrastructure.
+
+---
+
+# 18. Host-Based Routing
+
+Host-based routing allows multiple applications to run behind a single ALB.
+
+The ALB checks the domain name and forwards traffic accordingly.
+
+Example:
+
+```text
+organic.in-sur.site → organic-tg
+fitness.in-sur.site → fitness-tg
+```
+
+Benefits:
+
+* Cost Optimization
+* Centralized Traffic Management
+* Easier Scaling
+* Simplified Architecture
+
+---
+
+# 19. EC2 Application Layer
+
+Applications are deployed inside EC2 instances.
+
+The EC2 instances are placed inside private subnets for better security.
+
+Applications are not directly accessible from the internet.
+
+Traffic only reaches them through:
+
+```text
+Route 53 → ALB → Target Group → EC2
+```
+
+This architecture improves security significantly.
+
+---
+
+# 20. PM2 Process Management
+
+PM2 is used to manage Node.js applications.
+
+PM2 helps:
+
+* Keep applications running
+* Restart crashed applications
+* Monitor processes
+* Run applications in background
+
+Example:
+
+```bash
+pm2 start app.js
+```
+
+Benefits:
+
+* Process Stability
+* Easy Monitoring
+* Automatic Restart
+
+---
+
+# 21. MongoDB Database Layer
+
+MongoDB is used as the backend database.
+
+The database is deployed inside a private subnet.
+
+This improves:
+
+* Security
+* Isolation
+* Controlled Access
+
+Only application instances can access the database.
+
+---
+
+# 22. Dockerized MongoDB Deployment
+
+MongoDB is deployed using Docker Compose.
+
+Benefits of Dockerized MongoDB:
+
+* Easy Deployment
+* Portability
+* Isolation
+* Consistency
+* Persistent Storage
+
+---
+
+## Docker Compose Configuration
+
+The MongoDB container uses:
+
+```yaml
+MONGO_INITDB_ROOT_USERNAME
+MONGO_INITDB_ROOT_PASSWORD
+```
+
+Port Mapping:
+
+```yaml
+27017:27017
+```
+
+Docker Volume:
+
+Persistent volumes ensure data remains safe even if container restarts.
+
+---
+
+# 23. Launch Templates
+
+Launch Templates store EC2 configuration.
 
 Stored Configuration:
 
@@ -341,66 +721,147 @@ Separate launch templates are created for:
 * Organic Application
 * Fitness Application
 
----
+Benefits:
 
-# EC2 Application Layer
-
-Applications are deployed on EC2 instances inside private subnets.
-
-Each EC2 instance runs:
-
-* Node.js Application
-* PM2 Process Manager
-
-Applications are accessible only through the ALB.
+* Consistent Deployment
+* Faster Scaling
+* Reusable Configuration
 
 ---
 
-# Dockerized MongoDB Database Layer
+# 24. Auto Scaling Groups (ASG)
 
-MongoDB is deployed using Docker Compose.
+Auto Scaling Groups automatically manage EC2 instances.
 
----
+Two ASGs are created:
 
-## Docker Compose Features
-
-* MongoDB Authentication
-* Persistent Volumes
-* Port Mapping
-* Containerized Deployment
+| ASG         | Purpose     |
+| ----------- | ----------- |
+| organic-asg | Organic App |
+| fitness-asg | Fitness App |
 
 ---
 
-## MongoDB Configuration
+## ASG Configuration
 
-```yaml
-MONGO_INITDB_ROOT_USERNAME
-MONGO_INITDB_ROOT_PASSWORD
+Desired Capacity:
+
+```text
+1
 ```
 
-MongoDB runs inside a Docker container:
+Minimum Capacity:
 
-```bash
-mongodb
+```text
+1
 ```
 
-Database Name:
+Maximum Capacity:
 
-```bash
-fitness-tracker
+```text
+2
 ```
 
 ---
 
-# Database Backup Workflow
+## ASG Responsibilities
+
+* Maintain desired instance count
+* Replace unhealthy instances
+* Distribute instances across AZs
+* Enable scalability
+
+---
+
+# 25. Health Checks and Self-Healing
+
+Health checks continuously monitor EC2 instances.
+
+If an instance becomes unhealthy:
+
+1. Target Group marks instance unhealthy
+2. ALB stops sending traffic
+3. ASG terminates unhealthy instance
+4. ASG launches replacement instance
+5. New instance automatically registers to Target Group
+
+This is called self-healing infrastructure.
+
+---
+
+# 26. Traffic Flow Explanation
+
+The complete traffic flow works like this:
+
+## Step 1
+
+User enters:
+
+```text
+organic.in-sur.site
+```
+
+---
+
+## Step 2
+
+Route 53 resolves the domain.
+
+---
+
+## Step 3
+
+Traffic reaches ALB.
+
+---
+
+## Step 4
+
+ALB listener checks host header.
+
+---
+
+## Step 5
+
+ALB forwards request to:
+
+```text
+organic-tg
+```
+
+---
+
+## Step 6
+
+Target Group forwards request to healthy EC2 instance.
+
+---
+
+## Step 7
+
+Application communicates with MongoDB.
+
+---
+
+## Step 8
+
+Response returns back to user.
+
+---
+
+# 27. Database Backup Workflow
 
 An automated MongoDB backup workflow is implemented.
 
+Purpose:
+
+* Disaster Recovery
+* Data Protection
+* Backup Automation
+
 ---
 
-## Backup Steps
-
-### Step 1 — Execute mongodump
+## Step 1 — Execute mongodump
 
 The backup script executes:
 
@@ -408,11 +869,11 @@ The backup script executes:
 mongodump
 ```
 
-inside the MongoDB Docker container.
+inside the MongoDB container.
 
 ---
 
-### Step 2 — Copy Backup
+## Step 2 — Copy Backup Files
 
 Backup files are copied from container to EC2 host using:
 
@@ -422,11 +883,11 @@ docker cp
 
 ---
 
-### Step 3 — Compress Backup
+## Step 3 — Compress Backup
 
 Backup files are compressed into:
 
-```bash
+```text
 .tar.gz
 ```
 
@@ -434,9 +895,9 @@ archive.
 
 ---
 
-### Step 4 — Upload to Amazon S3
+## Step 4 — Upload to S3
 
-The backup file is uploaded using:
+Backup uploaded using:
 
 ```bash
 aws s3 cp
@@ -444,86 +905,30 @@ aws s3 cp
 
 ---
 
-### Step 5 — Cleanup
+## Step 5 — Cleanup
 
 Temporary files are removed automatically.
 
 ---
 
-# Amazon S3 Backup Storage
+# 28. Amazon S3 Backup Storage
 
-MongoDB backups are stored in:
+MongoDB backups are stored inside:
 
-```bash
+```text
 s3-kajapathy-databackup
 ```
 
 Benefits:
 
-* Durable storage
-* Offsite backup
-* Disaster recovery
-* Centralized backup management
+* Durable Storage
+* Cloud Backup
+* Disaster Recovery
+* Secure Storage
 
 ---
 
-# Security Groups
-
-## ALB Security Group
-
-Allowed:
-
-```bash
-HTTP (80) from 0.0.0.0/0
-```
-
----
-
-## Application Security Group
-
-Allowed:
-
-```bash
-HTTP (80) only from ALB Security Group
-SSH (22) from My IP
-```
-
----
-
-## MongoDB Security Group
-
-Allowed:
-
-```bash
-MongoDB (27017) only from App Security Group
-SSH (22) from My IP
-```
-
----
-
-# Traffic Flow
-
-```text
-User
-   ↓
-Route 53
-   ↓
-Application Load Balancer
-   ↓
-Listener Rules
-   ↓
-Target Group
-   ↓
-Auto Scaling Group
-   ↓
-EC2 Application Instances
-   ↓
-MongoDB Database
-```
-
----
-
-# High Availability & Fault Tolerance
+# 29. High Availability and Fault Tolerance
 
 The architecture supports high availability using:
 
@@ -532,84 +937,107 @@ The architecture supports high availability using:
 * Health Checks
 * Self-Healing Infrastructure
 
-If an EC2 instance fails:
+If one instance fails:
 
-1. ALB detects unhealthy instance
-2. Stops sending traffic
-3. ASG launches replacement instance
-4. Traffic resumes automatically
+* ALB reroutes traffic
+* ASG launches replacement
+* Application remains available
 
 ---
 
-# Project Workflow
+# 30. Project Workflow Step-by-Step
 
 ## Step 1
 
-Create VPC and Subnets
+Create VPC
 
 ---
 
 ## Step 2
 
-Configure Route Tables and Internet Gateway
+Create Public and Private Subnets
 
 ---
 
 ## Step 3
 
-Deploy Application Load Balancer
+Attach Internet Gateway
 
 ---
 
 ## Step 4
 
-Configure Route 53 DNS
+Create NAT Gateway
 
 ---
 
 ## Step 5
 
-Create Target Groups
+Configure Route Tables
 
 ---
 
 ## Step 6
 
-Configure Host-Based Routing
+Configure Security Groups
 
 ---
 
 ## Step 7
 
-Launch EC2 Applications
+Create Route 53 Hosted Zone
 
 ---
 
 ## Step 8
 
-Create Launch Templates
+Create Application Load Balancer
 
 ---
 
 ## Step 9
 
-Create Auto Scaling Groups
+Create Target Groups
 
 ---
 
 ## Step 10
 
-Deploy MongoDB Database
+Configure Host-Based Routing
 
 ---
 
 ## Step 11
 
+Deploy EC2 Applications
+
+---
+
+## Step 12
+
+Create Launch Templates
+
+---
+
+## Step 13
+
+Create Auto Scaling Groups
+
+---
+
+## Step 14
+
+Deploy MongoDB Database
+
+---
+
+## Step 15
+
 Implement Database Backup Workflow
 
 ---
 
-# GitHub Repository Structure
+# 31. Folder Structure
 
 ```bash
 project/
@@ -625,42 +1053,51 @@ project/
 
 ---
 
-# Key Learnings
+# 32. Key Features
 
-* Multi-application hosting using ALB
-* Host-based routing
-* DNS delegation with Route 53
-* Auto Scaling implementation
-* Private subnet deployment
-* Dockerized database deployment
-* Automated database backups
-* High availability architecture
-* AWS networking concepts
+* Multi-Application Hosting
+* Host-Based Routing
+* Auto Scaling
+* High Availability
+* Self-Healing Infrastructure
+* Secure Private Subnet Deployment
+* Dockerized MongoDB
+* Automated Database Backup
+* S3 Cloud Storage
+* Production-Style Architecture
 
 ---
 
-# Future Improvements
+# 33. Future Improvements
+
+Future enhancements can include:
 
 * HTTPS using ACM
 * CI/CD Pipeline
-* Terraform Infrastructure as Code
+* Terraform Automation
 * CloudWatch Monitoring
-* WAF Integration
+* AWS WAF
 * Multi-Region Deployment
+* Kubernetes Migration
 
 ---
 
-# Conclusion
+# 34. Conclusion
 
-This project demonstrates a real-world AWS deployment architecture using modern cloud infrastructure concepts.
+This project demonstrates a complete production-style AWS infrastructure deployment using modern cloud architecture principles.
 
-The architecture provides:
+The implementation successfully combines:
 
-* Scalability
+* Networking
+* Compute
+* Scaling
+* Load Balancing
+* DNS Management
+* Database Deployment
+* Backup Automation
 * High Availability
 * Security
-* Fault Tolerance
-* Automated Recovery
-* Centralized Traffic Management
 
-The implementation successfully combines networking, compute, storage, scaling, and backup solutions into a production-style cloud deployment architecture.
+This architecture closely resembles real-world enterprise cloud deployments and provides hands-on experience with AWS infrastructure design, scalable application hosting, and cloud networking concepts.
+
+The project also demonstrates how AWS services can work together to build secure, scalable, fault-tolerant, and production-ready cloud applications.
