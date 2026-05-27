@@ -6,40 +6,41 @@
 
 # Table of Contents
 
-1. Project Overview
-2. Architecture Overview
-3. Architecture Flow
-4. AWS Services Used
-5. Technologies Used
-6. Networking Architecture
-7. VPC Configuration
-8. Public and Private Subnets
-9. Internet Gateway
-10. NAT Gateway
-11. Route Tables
-12. Security Groups
-13. Amazon Route 53
-14. DNS Resolution Flow
-15. Application Load Balancer (ALB)
-16. ALB Listener Rules
-17. Target Groups
-18. Host-Based Routing
-19. EC2 Application Layer
-20. PM2 Process Management
-21. MongoDB Database Layer
-22. Dockerized MongoDB Deployment
-23. Launch Templates
-24. Auto Scaling Groups (ASG)
-25. Health Checks and Self-Healing
-26. Traffic Flow Explanation
-27. Database Backup Workflow
-28. Amazon S3 Backup Storage
-29. High Availability and Fault Tolerance
-30. Project Workflow Step-by-Step
-31. Folder Structure
-32. Key Features
-33. Future Improvements
-34. Conclusion
+1. [Project Overview](#1-project-overview)
+2. [Architecture Overview](#2-architecture-overview)
+3. [Architecture Flow](#3-architecture-flow)
+4. [AWS Services Used](#4-aws-services-used)
+5. [Technologies Used](#5-technologies-used)
+6. [Networking Architecture](#6-networking-architecture)
+7. [VPC Configuration](#7-vpc-configuration)
+8. [Public and Private Subnets](#8-public-and-private-subnets)
+9. [Internet Gateway](#9-internet-gateway)
+10. [NAT Gateway](#10-nat-gateway)
+11. [Route Tables](#11-route-tables)
+12. [Security Groups](#12-security-groups)
+13. [Amazon Route 53](#13-amazon-route-53)
+14. [DNS Resolution Flow](#14-dns-resolution-flow)
+15. [Application Load Balancer (ALB)](#15-application-load-balancer-alb)
+16. [ALB Listener Rules](#16-alb-listener-rules)
+17. [Target Groups](#17-target-groups)
+18. [Host-Based Routing](#18-host-based-routing)
+19. [EC2 Application Layer](#19-ec2-application-layer)
+20. [PM2 Process Management](#20-pm2-process-management)
+21. [MongoDB Database Layer](#21-mongodb-database-layer)
+22. [Dockerized MongoDB Deployment](#22-dockerized-mongodb-deployment)
+23. [Launch Templates](#23-launch-templates)
+24. [Auto Scaling Groups (ASG)](#24-auto-scaling-groups-asg)
+25. [Health Checks and Self-Healing](#25-health-checks-and-self-healing)
+26. [Traffic Flow Explanation](#26-traffic-flow-explanation)
+27. [Database Backup Workflow](#27-database-backup-workflow)
+28. [Amazon S3 Backup Storage](#28-amazon-s3-backup-storage)
+29. [High Availability and Fault Tolerance](#29-high-availability-and-fault-tolerance)
+30. [Project Workflow Step-by-Step](#30-project-workflow-step-by-step)
+31. [Folder Structure](#31-folder-structure)
+32. [Key Features](#32-key-features)
+33. [Future Improvements](#33-future-improvements)
+34. [Conclusion](#34-conclusion)
+
 
 ---
 
